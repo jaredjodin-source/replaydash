@@ -1,0 +1,37 @@
+name: Build ReplayDash
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - Android32
+          - Android64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Geode Mod
+        uses: geode-sdk/build-geode-mod@main
+        with:
+          target: ${{ matrix.target }}
+          sdk: v3.8.0
+
+      - name: Upload Geode
+        uses: actions/upload-artifact@v4
+        with:
+          name: ReplayDash-${{ matrix.target }}
+          path: build/*.geode
+          if-no-files-found: error
